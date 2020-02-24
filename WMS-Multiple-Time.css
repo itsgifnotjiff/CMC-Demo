@@ -11,6 +11,12 @@ html, body {
     grid-gap: 5px;
     padding: 5px;
     }
+    .grid-container-titles {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 2vh 2vh;
+    grid-gap: 5px;
+    }
     .header img {
     margin: 5px;
     float: right;

@@ -1,5 +1,5 @@
 
-var layers_map1 = [
+var layers_map_1 = [
             new ol.layer.Tile({
             source: new ol.source.OSM()
             }),
@@ -13,18 +13,7 @@ var layers_map1 = [
             })
         ]
 
-var map1 = new ol.Map({
-    target: 'map1',
-    layers: layers_map1,
-    view: new ol.View({
-        center: ol.proj.fromLonLat([-100, 45]),
-        zoom: 4
-    })
-});
-
-var map2 = new ol.Map({
-    target: 'map2',
-    layers: [
+var layers_map_2 = [
             new ol.layer.Tile({
             source: new ol.source.OSM()
             }),
@@ -36,16 +25,8 @@ var map2 = new ol.Map({
                 serverType: 'mapserver'
             })
             })
-        ],
-    view: new ol.View({
-        center: ol.proj.fromLonLat([-100, 45]),
-        zoom: 4
-    })
-});
-
-var map3 = new ol.Map({
-    target: 'map3',
-    layers: [
+        ]
+var layers_map_3 = [
             new ol.layer.Tile({
             source: new ol.source.OSM()
             }),
@@ -57,16 +38,9 @@ var map3 = new ol.Map({
                 serverType: 'mapserver'
             })
             })
-        ],
-    view: new ol.View({
-        center: ol.proj.fromLonLat([-100, 45]),
-        zoom: 4
-    })
-});
+        ]
 
-var map4 = new ol.Map({
-    target: 'map4',
-    layers: [
+var layers_map_4 = [
         new ol.layer.Tile({
         source: new ol.source.OSM()
         }),
@@ -79,13 +53,51 @@ var map4 = new ol.Map({
         }),
         opacity: 0.4
         })
-    ],
+    ]
+
+var view_map_1 = new ol.View({center: ol.proj.fromLonLat([-100, 45]),zoom: 4})
+
+var map1 = new ol.Map({
+    target: 'map1',
+    layers: layers_map_1,
+    view: view_map_1
+});
+
+
+var map2 = new ol.Map({
+    target: 'map2',
+    layers: layers_map_2,
+    view: new ol.View({
+        center: ol.proj.fromLonLat([-100, 45]),
+        zoom: 4
+    })
+});
+
+var map3 = new ol.Map({
+    target: 'map3',
+    layers: layers_map_3,
+    view: new ol.View({
+        center: ol.proj.fromLonLat([-100, 45]),
+        zoom: 4
+    })
+});
+
+var map4 = new ol.Map({
+    target: 'map4',
+    layers: layers_map_4,
 
     view: new ol.View({
         center: ol.proj.fromLonLat([-100, 45]),
         zoom: 4
     })
 });
+
+function sync() {
+	map2.setView(map1.getView());
+	map3.setView(map1.getView());
+	map4.setView(map1.getView());
+    
+}
 
 function sync1() {
     map2.setView(map1.getView());
@@ -138,10 +150,34 @@ function unsync() {
 
 const parser = new DOMParser();
 
-async function getTitle() {
+async function getTitle_1() {
   let response = await fetch('https://geo.weather.gc.ca/geomet/?lang=en&service=WMS&request=GetCapabilities&version=1.3.0&LAYERS=RADAR_1KM_RSNO')
   let data = await response.text().then(
-    data => parser.parseFromString(data, 'text/xml').getElementsByTagName('Title')
+    data => parser.parseFromString(data, 'text/xml').getElementsByTagName('Title')[5].innerHTML
+  )
+  return data
+}
+
+async function getTitle_2() {
+  let response = await fetch('https://geo.weather.gc.ca/geomet/?lang=en&service=WMS&request=GetCapabilities&version=1.3.0&LAYERS=CURRENT_CONDITIONS')
+  let data = await response.text().then(
+    data => parser.parseFromString(data, 'text/xml').getElementsByTagName('Title')[3].innerHTML
+  )
+  return data
+}
+
+async function getTitle_3() {
+  let response = await fetch('https://geo.weather.gc.ca/geomet/?lang=en&service=WMS&request=GetCapabilities&version=1.3.0&LAYERS=HRDPS.CONTINENTAL_TT')
+  let data = await response.text().then(
+    data => parser.parseFromString(data, 'text/xml').getElementsByTagName('Title')[5].innerHTML
+  )
+  return data
+}
+
+async function getTitle_4() {
+  let response = await fetch('https://geo.weather.gc.ca/geomet/?lang=en&service=WMS&request=GetCapabilities&version=1.3.0&LAYERS=HRDPS.CONTINENTAL_HU')
+  let data = await response.text().then(
+    data => parser.parseFromString(data, 'text/xml').getElementsByTagName('Title')[5].innerHTML
   )
   return data
 }
@@ -158,12 +194,41 @@ async function getRadarStartEndTime() {
 var frameRate = 5.0;
 var animationId = null;
 let current_time = null;
-let title =  null;
 
-function updateInfo(current_time) {
-  let el = document.getElementById('info');
-  el.innerHTML = `Time : ${current_time.toISOString()} Title : ${title}`
+async function updateInfo(current_time) 
+{
+    let el = document.getElementById('info');
+    el.innerHTML = `Time : ${current_time.toISOString()}`
 }
+
+async function updateTitle_1() 
+{
+    let title_1 =  await getTitle_1();
+    let el = document.getElementById('Title_1');
+    el.innerHTML = `Title 1 : ${title_1}`
+}
+
+async function updateTitle_2() 
+{
+    let title_2 =  await getTitle_2();
+    let el = document.getElementById('Title_2');
+    el.innerHTML = `Title 2 : ${title_2}`
+}
+
+async function updateTitle_3() 
+{
+    let title_3 =  await getTitle_3();
+    let el = document.getElementById('Title_3');
+    el.innerHTML = `Title 3 : ${title_3}`
+}
+
+async function updateTitle_4() 
+{
+    let title_4 =  await getTitle_4();
+    let el = document.getElementById('Title_4');
+    el.innerHTML = `Title 4 : ${title_4}`
+}
+
 
 function setTime() {
   current_time = current_time
@@ -175,9 +240,13 @@ function setTime() {
     } else {
       current_time = new Date(current_time.setMinutes(current_time.getMinutes() + 10));
     }
-    layers_map1[1].getSource().updateParams({'TIME': current_time.toISOString().split('.')[0]+"Z"});
+    layers_map_1[1].getSource().updateParams({'TIME': current_time.toISOString().split('.')[0]+"Z"});
     updateInfo(current_time)
-  })
+  });
+  updateTitle_1();
+  updateTitle_2();
+  updateTitle_3();
+  updateTitle_4();
 }
 
 setTime();
