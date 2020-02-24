@@ -1,0 +1,36 @@
+html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 95%;
+    }
+    .grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 40vh 40vh;
+    grid-gap: 5px;
+    padding: 5px;
+    }
+    .header img {
+    margin: 5px;
+    float: right;
+    width: 600px;
+    height: 36px;
+    }
+
+    .header h1 {
+    /* position: center; */
+    /* top: 18px; */
+    left: 10px;
+    }
+    .controls{
+    width: 90%;
+    margin: 0;
+    padding: 5px;
+    }
+    .controlrow{
+    height: 50%;
+    width: 100%;
+    margin: 0;
+    padding: 5px;
+}
