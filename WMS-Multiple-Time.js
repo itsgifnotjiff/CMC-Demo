@@ -155,7 +155,7 @@ async function getRadarStartEndTime() {
   return [new Date(data[0]), new Date(data[1])]
 }
 
-var frameRate = 1.0;
+var frameRate = 5.0;
 var animationId = null;
 let current_time = null;
 let title =  null;
